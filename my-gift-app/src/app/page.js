@@ -39,13 +39,14 @@ export default function Home() {
               <div className="w-full h-0.5 bg-white"></div>
               <div className="w-full h-0.5 bg-white"></div>
             </div>
-            {/* Logo Star */}
             <div className="text-white text-2xl">✦</div>
           </div>
 
           {/* Navigation - Centered */}
           {/* Added 'hidden' and 'sm:flex' here */}
           <nav className="hidden sm:flex items-center gap-8 text-white text-sm">
+            {/* <div className="text-white text-2xl">✦</div> */}
+
             <a href="#" className="hover:text-gray-300 transition-colors">
               Home
             </a>
@@ -79,10 +80,11 @@ export default function Home() {
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-center px-4 py-12">
         {/* Logo */}
-        <div className="text-white text-8xl font-bold mb-16 tracking-wider font-serif">
+        <div
+          className="text-white font-bold mb-16 tracking-wider sevillana-font
+                text-6xl sm:text-7xl md:text-8xl">
           11:11
         </div>
-
         {/* Services Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-6xl mb-16">
           {[

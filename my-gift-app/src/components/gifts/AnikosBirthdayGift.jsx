@@ -11,60 +11,102 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
-const SECRET_CODE = "1293";
+const ACCESS_CODE = "1293";
 
 export default function AnikosBirthdayGift({ data }) {
-  const [bestMoment, setBestMoment] = useState("");
+  const [name, setName] = useState("");
   const [wish, setWish] = useState("");
-  const [entries, setEntries] = useState([]);
+  const [memory, setMemory] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
+  const [cooldown, setCooldown] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [code, setCode] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [error, setError] = useState("");
+  const [wishes, setWishes] = useState([]);
+  const [loadingWishes, setLoadingWishes] = useState(false);
+
+  const stars = Array.from({ length: 50 }, (_, i) => ({
+    id: i,
+    left: Math.random() * 100,
+    top: Math.random() * 100,
+    delay: Math.random() * 3,
+    duration: 1 + Math.random() * 2,
+  }));
 
   useEffect(() => {
     if (!isUnlocked || !data?.id) {
-      setEntries([]);
+      setWishes([]);
       return;
     }
+    setLoadingWishes(true);
 
     const colRef = collection(db, "gifts", data.id, "friendshipEntries");
     const q = query(colRef, orderBy("createdAt", "desc"));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const loadedEntries = snapshot.docs.map((doc) => ({
+      const loaded = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setEntries(loadedEntries);
+      setWishes(
+        loaded.sort(
+          (a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)
+        )
+      );
+      setLoadingWishes(false);
     });
 
     return () => unsubscribe();
   }, [isUnlocked, data]);
 
+  useEffect(() => {
+    if (submitted) {
+      const timeout = setTimeout(() => setSubmitted(false), 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [submitted]);
+
   async function handleSubmit() {
-    if (!bestMoment.trim() || !wish.trim()) return;
+    if (
+      !name.trim() ||
+      !wish.trim() ||
+      !memory.trim() ||
+      cooldown ||
+      submitting
+    )
+      return;
 
     try {
+      setSubmitting(true);
       const colRef = collection(db, "gifts", data.id, "friendshipEntries");
       await addDoc(colRef, {
-        bestMoment: bestMoment.trim(),
+        name: name.trim(),
         wish: wish.trim(),
+        memory: memory.trim(),
         createdAt: serverTimestamp(),
       });
 
-      setBestMoment("");
+      setName("");
       setWish("");
+      setMemory("");
       setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 3500);
+      setCooldown(true);
+      setTimeout(() => setCooldown(false), 5000);
     } catch (err) {
-      console.error("Error adding diary entry:", err);
+      console.error("Error adding wish:", err);
+    } finally {
+      setSubmitting(false);
     }
   }
 
+  function normalizeCode(input) {
+    return input.replace(/[^\d]/g, "");
+  }
+
   function handleUnlock() {
-    if (code.trim() === SECRET_CODE) {
+    const normalized = normalizeCode(code);
+    if (normalized === ACCESS_CODE) {
       setIsUnlocked(true);
       setError("");
     } else {
@@ -74,240 +116,176 @@ export default function AnikosBirthdayGift({ data }) {
     setCode("");
   }
 
-  function handleBackToForm() {
+  function handleLock() {
     setIsUnlocked(false);
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-pink-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-cyan-400 rounded-full blur-2xl opacity-30 animate-bounce"></div>
-        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-purple-500 rounded-full blur-3xl opacity-25 animate-pulse"></div>
-        <div className="absolute bottom-40 right-1/3 w-28 h-28 bg-green-400 rounded-full blur-2xl opacity-20 animate-bounce"></div>
-
-        {/* Grid Lines */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="grid grid-cols-8 grid-rows-8 h-full">
-            {Array.from({ length: 64 }).map((_, i) => (
-              <div key={i} className="border border-cyan-300"></div>
-            ))}
-          </div>
-        </div>
+    <div className="min-h-screen relative overflow-hidden bg-[repeating-linear-gradient(45deg,#dc143c_0px,#dc143c_8px,#fff_8px,#fff_16px,#dc143c_16px,#dc143c_24px,#fff_24px,#fff_32px)]">
+      <div className="absolute inset-0 z-0">
+        {stars.map((star) => (
+          <div
+            key={star.id}
+            className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
+            style={{
+              left: `${star.left}%`,
+              top: `${star.top}%`,
+              animationDelay: `${star.delay}s`,
+              animationDuration: `${star.duration}s`,
+            }}
+          />
+        ))}
       </div>
 
-      <div className="relative z-10 max-w-2xl mx-auto p-8 min-h-screen flex items-center justify-center">
-        <div className="w-full backdrop-blur-xl bg-black/20 rounded-3xl border border-cyan-400/30 shadow-2xl shadow-cyan-400/20 p-8">
-          {/* Glowing Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent mb-2 tracking-wider">
-              FRIENDSHIP
-            </h1>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-green-400 to-pink-400 bg-clip-text text-transparent mb-4 tracking-widest">
-              DIARY
-            </h2>
-            <div className="flex justify-center space-x-2 mb-4">
-              <div className="w-3 h-3 bg-pink-400 rounded-full animate-ping"></div>
-              <div
-                className="w-3 h-3 bg-cyan-400 rounded-full animate-ping"
-                style={{ animationDelay: "0.2s" }}></div>
-              <div
-                className="w-3 h-3 bg-green-400 rounded-full animate-ping"
-                style={{ animationDelay: "0.4s" }}></div>
-            </div>
-          </div>
-
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-6">
+        <div className="bg-pink-500/30 backdrop-blur-lg border-4 border-white shadow-[0_0_0_8px_#fff,0_0_0_16px_#dc143c,0_20px_40px_rgba(0,0,0,0.5)] px-8 py-10 max-w-md w-full text-center">
           {!isUnlocked ? (
             <>
-              {/* Entry Form */}
-              <div className="space-y-6 mb-8">
-                <div className="space-y-2">
-                  <label className="block text-cyan-300 font-bold text-lg tracking-wide">
-                    → BEST MOMENT MEMORY BANK
-                  </label>
-                  <textarea
-                    rows={4}
-                    maxLength={250}
-                    placeholder="Upload your favorite memory to the mainframe..."
-                    value={bestMoment}
-                    onChange={(e) => setBestMoment(e.target.value)}
-                    className="w-full bg-black/40 backdrop-blur-sm border-2 border-purple-400/50 rounded-2xl px-4 py-3 text-white placeholder-gray-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all duration-300 resize-none"
-                    required
-                  />
-                  <div className="text-right text-xs text-gray-400">
-                    {bestMoment.length}/250 characters
-                  </div>
-                </div>
+              <h1 className="text-3xl font-extrabold text-white mb-2 drop-shadow-lg uppercase tracking-wider rotate-[-2deg]">
+                Friendship Diary for Dealulu
+              </h1>
+              <p className="text-white/90 mb-6 font-bold uppercase tracking-wide text-sm">
+                Share a special memory with me!
+              </p>
 
-                <div className="space-y-2">
-                  <label className="block text-pink-300 font-bold text-lg tracking-wide">
-                    → WISH TRANSMISSION PORTAL
-                  </label>
-                  <textarea
-                    rows={4}
-                    maxLength={250}
-                    placeholder="Transmit your heartfelt wish across the digital cosmos..."
-                    value={wish}
-                    onChange={(e) => setWish(e.target.value)}
-                    className="w-full bg-black/40 backdrop-blur-sm border-2 border-purple-400/50 rounded-2xl px-4 py-3 text-white placeholder-gray-400 focus:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-400/50 transition-all duration-300 resize-none"
-                    required
-                  />
-                  <div className="text-right text-xs text-gray-400">
-                    {wish.length}/250 characters
-                  </div>
-                </div>
+              <input
+                type="text"
+                placeholder="Enter your name..."
+                className="w-full mb-4 bg-white/90 border-4 border-white text-pink-700 p-3 font-bold placeholder-pink-300 focus:outline-none focus:ring-4 focus:ring-pink-200"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
 
+              <textarea
+                rows={4}
+                placeholder="Tell me about your favorite memory..."
+                className="w-full mb-4 bg-white/90 border-4 border-white text-pink-700 p-3 font-bold placeholder-pink-300 focus:outline-none focus:ring-4 focus:ring-pink-200 resize-none"
+                value={memory}
+                onChange={(e) => setMemory(e.target.value)}
+              />
+
+              <textarea
+                rows={3}
+                placeholder="Write me a message..."
+                className="w-full mb-4 bg-white/90 border-4 border-white text-pink-700 p-3 font-bold placeholder-pink-300 focus:outline-none focus:ring-4 focus:ring-pink-200 resize-none"
+                value={wish}
+                onChange={(e) => setWish(e.target.value)}
+              />
+
+              <button
+                onClick={handleSubmit}
+                disabled={
+                  !name.trim() ||
+                  !wish.trim() ||
+                  !memory.trim() ||
+                  cooldown ||
+                  submitting
+                }
+                className="w-full py-3 bg-pink-600 text-white border-4 border-white font-extrabold text-lg uppercase tracking-wider hover:bg-pink-700 transition-all shadow-[0_8px_0_#8b0000] disabled:opacity-70 disabled:cursor-not-allowed">
+                {submitting ? "📤 Submitting..." : "📤 Submit"}
+              </button>
+
+              {submitted && !submitting && (
+                <div className="mt-4 p-4 border-4 border-white bg-white/90 text-pink-600 font-extrabold text-lg uppercase animate-pulse">
+                  💖 Thank you for sharing!
+                </div>
+              )}
+
+              <div className="mt-8 pt-6 border-t-4 border-white">
+                <p className="text-white mb-3 uppercase font-bold tracking-wide">
+                  Want to read what others wrote?
+                </p>
+                <input
+                  type="text"
+                  placeholder="Enter the magic code"
+                  className="w-full mb-4 bg-white/90 border-4 border-white text-pink-700 p-3 font-bold text-center placeholder-pink-300 focus:outline-none focus:ring-4 focus:ring-pink-200"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleUnlock();
+                  }}
+                />
                 <button
-                  type="button"
-                  onClick={handleSubmit}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-4 px-8 rounded-2xl shadow-lg shadow-purple-500/30 transform hover:scale-105 transition-all duration-300 border border-purple-400/50 tracking-wide">
-                  <span className="flex items-center justify-center space-x-2">
-                    <span>TRANSMIT DATA</span>
-                    <span className="text-xl">⚡</span>
-                  </span>
+                  onClick={handleUnlock}
+                  className="w-full py-3 bg-white text-pink-600 border-4 border-pink-500 font-extrabold uppercase tracking-wider hover:bg-pink-50 transition-all shadow-[0_8px_0_#ff1493]">
+                  🔓 Unlock Entries
                 </button>
-
-                {submitted && (
-                  <div className="text-center p-4 bg-green-400/20 border border-green-400/50 rounded-2xl backdrop-blur-sm">
-                    <p className="text-green-300 font-bold text-lg animate-pulse">
-                      ✓ DATA SUCCESSFULLY TRANSMITTED ✓
-                    </p>
+                {error && (
+                  <div className="mt-4 p-3 border-4 border-red-400 bg-red-500/20 text-white font-bold animate-pulse">
+                    {error}
                   </div>
                 )}
               </div>
-
-              {/* Unlock Section */}
-              <div className="border-t border-cyan-400/30 pt-8">
-                <div className="space-y-4">
-                  <div className="text-center mb-4">
-                    <p className="text-cyan-300 font-bold text-lg tracking-wide">
-                      → ACCESS MEMORY VAULT
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <input
-                      type="password"
-                      value={code}
-                      onChange={(e) => setCode(e.target.value)}
-                      placeholder="Enter access code..."
-                      className="w-full bg-black/40 backdrop-blur-sm border-2 border-cyan-400/50 rounded-2xl px-4 py-3 text-center text-white placeholder-gray-400 focus:border-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400/50 transition-all duration-300 tracking-widest text-lg"
-                      required
-                    />
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleUnlock}
-                    className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-cyan-500/30 transform hover:scale-105 transition-all duration-300 border border-cyan-400/50 tracking-wide">
-                    <span className="flex items-center justify-center space-x-2">
-                      <span>UNLOCK VAULT</span>
-                      <span className="text-xl">🔓</span>
-                    </span>
-                  </button>
-
-                  {error && (
-                    <div className="text-center p-3 bg-red-500/20 border border-red-500/50 rounded-2xl backdrop-blur-sm">
-                      <p className="text-red-300 font-bold animate-pulse">
-                        ⚠️ {error} ⚠️
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
             </>
           ) : (
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
+            <>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-extrabold text-white drop-shadow-lg">
+                  💝 Friendship Memories
+                </h2>
                 <button
-                  onClick={handleBackToForm}
-                  className="bg-gradient-to-r from-purple-600/50 to-pink-600/50 hover:from-purple-500/50 hover:to-pink-500/50 text-white font-bold py-2 px-6 rounded-xl backdrop-blur-sm border border-purple-400/50 transition-all duration-300">
-                  ← BACK TO TERMINAL
+                  onClick={handleLock}
+                  className="text-white hover:text-pink-100 bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full border border-white">
+                  🔒 Lock
                 </button>
-                <div className="text-green-400 font-bold text-sm tracking-wide">
-                  ● VAULT UNLOCKED ●
+              </div>
+              <p className="text-white/90 mb-4 text-sm font-bold uppercase">
+                {wishes.length} {wishes.length === 1 ? "memory" : "memories"}{" "}
+                shared
+              </p>
+              {loadingWishes ? (
+                <div className="flex justify-center items-center h-20">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-white border-opacity-30" />
                 </div>
-              </div>
-
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent tracking-wide">
-                  → MEMORY ARCHIVES ←
-                </h3>
-              </div>
-
-              {entries.length === 0 ? (
-                <div className="text-center p-8 bg-purple-500/20 border border-purple-400/50 rounded-2xl backdrop-blur-sm">
-                  <p className="text-purple-300 text-lg">◊ NO DATA FOUND ◊</p>
-                  <p className="text-gray-400 text-sm mt-2">
-                    Be the first to upload memories to the archive
-                  </p>
+              ) : wishes.length === 0 ? (
+                <div className="text-white/90 text-center font-bold">
+                  📝 Be the first to share a memory!
                 </div>
               ) : (
-                <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {entries.map(({ id, bestMoment, wish, createdAt }) => (
+                <div className="space-y-6 max-h-96 overflow-y-auto custom-scrollbar">
+                  {wishes.map(({ id, name, wish, memory, createdAt }) => (
                     <div
                       key={id}
-                      className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-lg border border-cyan-400/30 rounded-2xl p-6 shadow-lg shadow-cyan-400/10 hover:shadow-cyan-400/20 transition-all duration-300 hover:scale-[1.02]">
-                      <div className="mb-4">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                          <span className="text-cyan-300 font-bold text-sm tracking-wide">
-                            MEMORY DATA
-                          </span>
-                        </div>
-                        <p className="text-white leading-relaxed bg-black/20 p-3 rounded-xl border border-cyan-400/20">
-                          {bestMoment}
+                      className="bg-pink-500/30 backdrop-blur border-4 border-white shadow-[0_0_0_6px_#fff,0_0_0_12px_#dc143c,0_15px_30px_rgba(0,0,0,0.4)] p-4 text-left">
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="text-white font-bold uppercase tracking-wide">
+                          {name}
+                        </p>
+                        <span className="text-white/70 text-sm">
+                          {createdAt?.toDate
+                            ? createdAt.toDate().toLocaleString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })
+                            : "Just now"}
+                        </span>
+                      </div>
+                      <div className="mb-2">
+                        <p className="text-pink-100 font-bold text-sm mb-1">
+                          🌟 Favorite Memory
+                        </p>
+                        <p className="text-white bg-white/90 text-pink-700 font-bold border-4 border-white p-2">
+                          {memory}
                         </p>
                       </div>
-
-                      <div className="mb-4">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse"></div>
-                          <span className="text-pink-300 font-bold text-sm tracking-wide">
-                            WISH TRANSMISSION
-                          </span>
-                        </div>
-                        <p className="text-white leading-relaxed bg-black/20 p-3 rounded-xl border border-pink-400/20">
+                      <div>
+                        <p className="text-pink-100 font-bold text-sm mb-1">
+                          💌 Message
+                        </p>
+                        <p className="text-white bg-white/90 text-pink-700 font-bold border-4 border-white p-2">
                           {wish}
                         </p>
-                      </div>
-
-                      <div className="text-right">
-                        <span className="text-xs text-gray-400 bg-black/30 px-3 py-1 rounded-full border border-gray-600/30">
-                          {createdAt?.toDate
-                            ? createdAt.toDate().toLocaleString()
-                            : "TIMESTAMP_ERROR"}
-                        </span>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
       </div>
-
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 4px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: linear-gradient(to bottom, #06b6d4, #8b5cf6);
-          border-radius: 4px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(to bottom, #0891b2, #7c3aed);
-        }
-      `}</style>
     </div>
   );
 }
