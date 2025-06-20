@@ -3,9 +3,10 @@ import { useState } from "react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a1847] via-[#2d1b69] to-[#8b3a62] relative overflow-hidden">
-      {/* Browser-like frame */}
-      <div className="absolute inset-4 border-2 border-white/20 rounded-lg"></div>
+    <div className="min-h-screen bg-gradient-to-br from-[#1a237e] via-[#4a148c] to-[#880e4f] relative overflow-hidden">
+      {/* Browser-like frame with rounded corners - Hidden on mobile */}
+      <div className="absolute inset-2 sm:inset-8 border-2 border-white/30 rounded-xl sm:rounded-3xl backdrop-blur-sm bg-white/5 hidden sm:block"></div>
+
       {/* Grid Background */}
       <div
         className="absolute inset-0 opacity-20"
@@ -14,39 +15,42 @@ export default function Home() {
             linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
           `,
-          backgroundSize: "50px 50px",
+          backgroundSize: "40px 40px",
         }}></div>
 
-      {/* Scattered Stars */}
+      {/* Scattered Stars and Shapes */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 text-white text-xs">✦</div>
-        <div className="absolute top-32 right-32 text-white text-sm">✦</div>
-        <div className="absolute top-48 left-1/4 text-white text-xs">✦</div>
-        <div className="absolute top-64 right-1/4 text-white text-sm">✦</div>
-        <div className="absolute bottom-32 left-16 text-white text-xs">✦</div>
-        <div className="absolute bottom-48 right-20 text-white text-sm">✦</div>
-        <div className="absolute top-1/3 right-1/3 text-white text-xs">✦</div>
-        <div className="absolute bottom-1/3 left-1/3 text-white text-sm">✦</div>
+        <div className="absolute top-16 left-20 text-white text-lg">✦</div>
+        <div className="absolute top-32 right-32 text-white text-sm">+</div>
+        <div className="absolute top-48 left-1/4 text-white text-lg">✦</div>
+        <div className="absolute top-64 right-1/4 text-white text-sm">+</div>
+        <div className="absolute bottom-32 left-16 text-white text-lg">✦</div>
+        <div className="absolute bottom-48 right-20 text-white text-sm">+</div>
+        <div className="absolute top-1/3 right-1/3 text-white text-lg">✦</div>
+        <div className="absolute bottom-1/3 left-1/3 text-white text-sm">+</div>
+
+        {/* 3D cube shapes */}
+        <div className="absolute top-40 right-16 w-8 h-8 bg-gradient-to-br from-pink-400/40 to-purple-600/40 transform rotate-45 rounded-sm"></div>
+        <div className="absolute bottom-40 left-32 w-6 h-6 bg-gradient-to-br from-blue-400/40 to-purple-600/40 transform rotate-12 rounded-sm"></div>
       </div>
 
-      {/* Header */}
-      <header className="relative z-20 p-10">
+      {/* Header - Browser-like */}
+      <header className="relative z-20 p-4 sm:p-12 lg:p-12">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Menu Icon */}
-          <div className="flex items-center gap-4">
-            <div className="w-6 h-6 flex flex-col justify-center gap-1">
-              <div className="w-full h-0.5 bg-white"></div>
-              <div className="w-full h-0.5 bg-white"></div>
-              <div className="w-full h-0.5 bg-white"></div>
+          {/* Browser Controls */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex gap-2">
+              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             </div>
-            <div className="text-white text-2xl">✦</div>
+            <div className="text-white text-base sm:text-lg font-semibold ml-2 sm:ml-4">
+              ELEVEN
+            </div>
           </div>
 
-          {/* Navigation - Centered */}
-          {/* Added 'hidden' and 'sm:flex' here */}
-          <nav className="hidden sm:flex items-center gap-8 text-white text-sm">
-            {/* <div className="text-white text-2xl">✦</div> */}
-
+          {/* Navigation - Tablet and Desktop */}
+          <nav className="hidden sm:flex items-center gap-8 text-white text-sm font-medium">
             <a href="#" className="hover:text-gray-300 transition-colors">
               Home
             </a>
@@ -58,249 +62,135 @@ export default function Home() {
             </a>
           </nav>
 
-          {/* Search - Larger Width */}
-          <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-6 py-2 border border-white/20 min-w-[200px]">
-            <svg
-              className="w-4 h-4 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            <span className="text-white text-sm">Search</span>
-          </div>
+          {/* Burger Menu - Mobile Only */}
+          <button className="sm:hidden flex flex-col gap-1 p-2">
+            <div className="w-5 h-0.5 bg-white rounded"></div>
+            <div className="w-5 h-0.5 bg-white rounded"></div>
+            <div className="w-5 h-0.5 bg-white rounded"></div>
+          </button>
+
+          {/* Empty space for balance - Tablet and Desktop */}
+          <div className="hidden sm:block w-32"></div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-4 py-12">
-        {/* Logo */}
-        <div
-          className="text-white font-bold mb-16 tracking-wider sevillana-font
-                text-6xl sm:text-7xl md:text-8xl">
-          11:11
+      <div className="relative z-10 flex flex-col items-center justify-center px-4 py-2 sm:py-4 lg:py-8 pb-16 sm:pb-8">
+        {/* Logo in rounded rectangle */}
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-6 sm:px-8 py-3 sm:py-4 mb-4 sm:mb-6 lg:mb-8">
+          <div className="text-white font-bold text-3xl sm:text-4xl tracking-wider">
+            11:11
+          </div>
         </div>
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-6xl mb-16">
+
+        {/* Search Bar */}
+        <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 sm:px-6 py-2 sm:py-3 border border-white/20 mb-6 sm:mb-8 lg:mb-12 w-full max-w-xs sm:max-w-md">
+          <span className="text-white/70 text-xs sm:text-sm flex-1 truncate">
+            Make it count++
+          </span>
+          <svg
+            className="w-4 h-4 sm:w-5 sm:h-5 text-white/70 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+
+        {/* Folder Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 max-w-4xl mx-auto mb-8 sm:mb-4">
           {[
             {
-              title: "Website Creation",
-              desc: "Custom responsive websites",
-              color: "bg-yellow-200",
-              tab: "bg-yellow-300",
-              icon: (
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9m0 9a9 9 0 01-9-9m9 9c0 5-4 9-9 9s-9-4-9-9m9 9a9 9 0 019-9m-9 9a9 9 0 01-9-9m9-9a9 9 0 00-9 9m9-9c0-5 4-9 9-9s9 4 9 9"
-                  />
-                </svg>
-              ),
+              title: "Friendship Diary",
+              gradient: "from-pink-400 to-red-500",
+              shadowColor: "shadow-pink-500/20",
             },
             {
-              title: "Brand Design",
-              desc: "Logo & identity kits",
-              color: "bg-pink-200",
-              tab: "bg-pink-300",
-              icon: (
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 21h10a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v7z"
-                  />
-                </svg>
-              ),
+              title: "Birthday wishes",
+              gradient: "from-cyan-400 to-blue-500",
+              shadowColor: "shadow-blue-500/20",
             },
             {
-              title: "Digital Gifts",
-              desc: "Interactive birthday & wedding gifts",
-              color: "bg-blue-200",
-              tab: "bg-blue-300",
-              icon: (
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-                  />
-                </svg>
-              ),
+              title: "Wedding",
+              gradient: "from-orange-400 to-yellow-500",
+              shadowColor: "shadow-orange-500/20",
             },
             {
-              title: "Consultations",
-              desc: "Talk through your ideas with us",
-              color: "bg-green-200",
-              tab: "bg-green-300",
-              icon: (
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
-                </svg>
-              ),
+              title: "Corporate Party",
+              gradient: "from-purple-400 to-indigo-500",
+              shadowColor: "shadow-purple-500/20",
             },
             {
-              title: "App Development",
-              desc: "Mobile & web applications",
-              color: "bg-purple-200",
-              tab: "bg-purple-300",
-              icon: (
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 18h.01M8 21h8a1 1 0 001-1V4a1 1 0 00-1-1H8a1 1 0 00-1 1v16a1 1 0 001 1z"
-                  />
-                </svg>
-              ),
+              title: "Love at First Sight",
+              gradient: "from-red-400 to-pink-500",
+              shadowColor: "shadow-red-500/20",
             },
             {
-              title: "SEO Services",
-              desc: "Search engine optimization",
-              color: "bg-orange-200",
-              tab: "bg-orange-300",
-              icon: (
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              ),
+              title: "Memories In Notes",
+              gradient: "from-green-400 to-teal-500",
+              shadowColor: "shadow-green-500/20",
             },
             {
-              title: "Content Writing",
-              desc: "Blog posts & copywriting",
-              color: "bg-red-200",
-              tab: "bg-red-300",
-              icon: (
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-              ),
+              title: "Photo Album of Memories",
+              gradient: "from-pink-500 to-purple-500",
+              shadowColor: "shadow-pink-500/20",
             },
             {
-              title: "Social Media",
-              desc: "Strategy & management",
-              color: "bg-cyan-200",
-              tab: "bg-cyan-300",
-              icon: (
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
-              ),
+              title: "Custom",
+              gradient: "from-yellow-400 to-orange-500",
+              shadowColor: "shadow-yellow-500/20",
             },
           ].map((item, index) => (
             <div
               key={index}
-              className="relative cursor-pointer hover:scale-105 hover:-translate-y-2 transition-all duration-300 group w-60 mx-auto">
-              {/* Folder Tab */}
-              <div
-                className={`absolute -top-3 left-4 w-20 h-6 ${item.tab} rounded-t-lg z-10 shadow-lg border-l border-r border-t border-black/10 flex items-center justify-center`}>
-                <div className="w-3 h-1 bg-black/20 rounded-full"></div>
-              </div>
+              className="flex flex-col items-center group cursor-pointer hover:scale-105 transition-all duration-300">
+              {/* 3D Folder Icon */}
+              <div className="relative mb-2 sm:mb-3">
+                {/* Main folder body */}
+                <div
+                  className={`w-16 sm:w-20 h-12 sm:h-16 bg-gradient-to-br ${item.gradient} rounded-lg ${item.shadowColor} shadow-xl relative overflow-hidden`}>
+                  {/* Folder tab */}
+                  <div
+                    className={`absolute -top-1.5 sm:-top-2 left-1.5 sm:left-2 w-6 sm:w-8 h-3 sm:h-4 bg-gradient-to-br ${item.gradient} rounded-t-lg`}></div>
 
-              {/* Main Folder Body */}
-              <div
-                className={`${item.color} rounded-b-lg rounded-tr-lg border border-black/10 shadow-xl p-5 pt-8 relative overflow-hidden group-hover:shadow-2xl transition-shadow duration-300 h-40 flex flex-col`}>
-                {/* Subtle gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
-
-                {/* Content */}
-                <div className="relative z-10 flex-1 flex flex-col">
-                  <div className="text-3xl mb-3 flex items-center gap-2">
-                    <span className="text-gray-700">{item.icon}</span>
-                    <span className="font-bold text-gray-800">
-                      {item.title.split(" ")[0]}
-                    </span>
+                  {/* Document lines inside folder */}
+                  <div className="absolute inset-0 p-1.5 sm:p-2 flex flex-col justify-center gap-0.5 sm:gap-1">
+                    <div className="w-3/4 h-0.5 bg-white/40 rounded"></div>
+                    <div className="w-full h-0.5 bg-white/40 rounded"></div>
+                    <div className="w-2/3 h-0.5 bg-white/40 rounded"></div>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-800 mb-2">
-                    {item.title.split(" ").slice(1).join(" ")}
-                  </h3>
-                  <p className="text-sm text-gray-700 leading-relaxed flex-1">
-                    {item.desc}
-                  </p>
+
+                  {/* Glossy effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent rounded-lg"></div>
                 </div>
 
-                {/* Corner fold effect */}
-                <div className="absolute top-0 right-0 w-6 h-6 bg-black/5 transform rotate-45 translate-x-3 -translate-y-3"></div>
+                {/* 3D depth effect */}
+                <div
+                  className={`absolute top-0.5 sm:top-1 left-0.5 sm:left-1 w-16 sm:w-20 h-12 sm:h-16 bg-gradient-to-br ${item.gradient} opacity-30 rounded-lg -z-10`}></div>
               </div>
 
-              {/* Shadow depth effect */}
-              <div
-                className={`absolute inset-0 ${item.color} rounded-b-lg rounded-tr-lg transform translate-x-1 translate-y-1 -z-10 opacity-30`}></div>
+              {/* Label */}
+              <span className="text-white text-xs sm:text-sm font-medium text-center leading-tight max-w-16 sm:max-w-20">
+                {item.title}
+              </span>
             </div>
           ))}
         </div>
-
-        {/* Bottom Tagline */}
-        <div className="text-white text-xl font-light tracking-wide">
-          Make it count++
-        </div>
       </div>
 
-      {/* Bottom decorative elements */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 flex items-end justify-center">
-        <div className="w-16 h-8 bg-gradient-to-t from-pink-400/30 to-transparent rounded-t-full"></div>
-        <div className="w-12 h-6 bg-gradient-to-t from-pink-400/20 to-transparent rounded-t-full ml-2"></div>
+      {/* Background mountain silhouette */}
+      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
+        <div
+          className="w-64 h-32 bg-gradient-to-t from-purple-600/20 to-transparent"
+          style={{
+            clipPath:
+              "polygon(20% 100%, 40% 60%, 60% 80%, 80% 40%, 100% 100%, 0% 100%)",
+          }}></div>
       </div>
     </div>
   );
