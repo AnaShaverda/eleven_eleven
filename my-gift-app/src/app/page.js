@@ -1,7 +1,17 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import ElevenModal from "./ElevenModal";
+import FeelingsModal from "./FeelingsModal";
 
 export default function Home() {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a237e] via-[#4a148c] to-[#880e4f] relative overflow-hidden">
       {/* Browser-like frame with rounded corners - Hidden on mobile */}
@@ -77,11 +87,16 @@ export default function Home() {
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-center px-4 py-2 sm:py-4 lg:py-8 pb-16 sm:pb-8">
         {/* Logo in rounded rectangle */}
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-6 sm:px-8 py-3 sm:py-4 mb-4 sm:mb-6 lg:mb-8">
+        <div
+          className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-6 sm:px-8 py-3 sm:py-4 mb-4 sm:mb-6 lg:mb-8 cursor-pointer"
+          onClick={() => setOpen(true)}>
           <div className="text-white font-bold text-3xl sm:text-4xl tracking-wider">
             11:11
           </div>
         </div>
+
+        {/* Show modal based on state */}
+        <ElevenModal open={open} setOpen={setOpen} />
 
         {/* Search Bar */}
         <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-4 sm:px-6 py-2 sm:py-3 border border-white/20 mb-6 sm:mb-8 lg:mb-12 w-full max-w-xs sm:max-w-md">
@@ -103,84 +118,88 @@ export default function Home() {
         </div>
 
         {/* Folder Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 max-w-4xl mx-auto mb-8 sm:mb-4">
-          {[
-            {
-              title: "Friendship Diary",
-              gradient: "from-pink-400 to-red-500",
-              shadowColor: "shadow-pink-500/20",
-            },
-            {
-              title: "Birthday wishes",
-              gradient: "from-cyan-400 to-blue-500",
-              shadowColor: "shadow-blue-500/20",
-            },
-            {
-              title: "Wedding",
-              gradient: "from-orange-400 to-yellow-500",
-              shadowColor: "shadow-orange-500/20",
-            },
-            {
-              title: "Corporate Party",
-              gradient: "from-purple-400 to-indigo-500",
-              shadowColor: "shadow-purple-500/20",
-            },
-            {
-              title: "Love at First Sight",
-              gradient: "from-red-400 to-pink-500",
-              shadowColor: "shadow-red-500/20",
-            },
-            {
-              title: "Memories In Notes",
-              gradient: "from-green-400 to-teal-500",
-              shadowColor: "shadow-green-500/20",
-            },
-            {
-              title: "Photo Album of Memories",
-              gradient: "from-pink-500 to-purple-500",
-              shadowColor: "shadow-pink-500/20",
-            },
-            {
-              title: "Custom",
-              gradient: "from-yellow-400 to-orange-500",
-              shadowColor: "shadow-yellow-500/20",
-            },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center group cursor-pointer hover:scale-105 transition-all duration-300">
-              {/* 3D Folder Icon */}
-              <div className="relative mb-2 sm:mb-3">
-                {/* Main folder body */}
-                <div
-                  className={`w-16 sm:w-20 h-12 sm:h-16 bg-gradient-to-br ${item.gradient} rounded-lg ${item.shadowColor} shadow-xl relative overflow-hidden`}>
-                  {/* Folder tab */}
+        {loading ? (
+          <FeelingsModal />
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 max-w-4xl mx-auto mb-8 sm:mb-4">
+            {[
+              {
+                title: "Friendship Diary",
+                gradient: "from-pink-400 to-red-500",
+                shadowColor: "shadow-pink-500/20",
+              },
+              {
+                title: "Birthday wishes",
+                gradient: "from-cyan-400 to-blue-500",
+                shadowColor: "shadow-blue-500/20",
+              },
+              {
+                title: "Wedding",
+                gradient: "from-orange-400 to-yellow-500",
+                shadowColor: "shadow-orange-500/20",
+              },
+              {
+                title: "Corporate Party",
+                gradient: "from-purple-400 to-indigo-500",
+                shadowColor: "shadow-purple-500/20",
+              },
+              {
+                title: "Love at First Sight",
+                gradient: "from-red-400 to-pink-500",
+                shadowColor: "shadow-red-500/20",
+              },
+              {
+                title: "Memories In Notes",
+                gradient: "from-green-400 to-teal-500",
+                shadowColor: "shadow-green-500/20",
+              },
+              {
+                title: "Photo Album of Memories",
+                gradient: "from-pink-500 to-purple-500",
+                shadowColor: "shadow-pink-500/20",
+              },
+              {
+                title: "Custom",
+                gradient: "from-yellow-400 to-orange-500",
+                shadowColor: "shadow-yellow-500/20",
+              },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center group cursor-pointer hover:scale-105 transition-all duration-300">
+                {/* 3D Folder Icon */}
+                <div className="relative mb-2 sm:mb-3">
+                  {/* Main folder body */}
                   <div
-                    className={`absolute -top-1.5 sm:-top-2 left-1.5 sm:left-2 w-6 sm:w-8 h-3 sm:h-4 bg-gradient-to-br ${item.gradient} rounded-t-lg`}></div>
+                    className={`w-16 sm:w-20 h-12 sm:h-16 bg-gradient-to-br ${item.gradient} rounded-lg ${item.shadowColor} shadow-xl relative overflow-hidden`}>
+                    {/* Folder tab */}
+                    <div
+                      className={`absolute -top-1.5 sm:-top-2 left-1.5 sm:left-2 w-6 sm:w-8 h-3 sm:h-4 bg-gradient-to-br ${item.gradient} rounded-t-lg`}></div>
 
-                  {/* Document lines inside folder */}
-                  <div className="absolute inset-0 p-1.5 sm:p-2 flex flex-col justify-center gap-0.5 sm:gap-1">
-                    <div className="w-3/4 h-0.5 bg-white/40 rounded"></div>
-                    <div className="w-full h-0.5 bg-white/40 rounded"></div>
-                    <div className="w-2/3 h-0.5 bg-white/40 rounded"></div>
+                    {/* Document lines inside folder */}
+                    <div className="absolute inset-0 p-1.5 sm:p-2 flex flex-col justify-center gap-0.5 sm:gap-1">
+                      <div className="w-3/4 h-0.5 bg-white/40 rounded"></div>
+                      <div className="w-full h-0.5 bg-white/40 rounded"></div>
+                      <div className="w-2/3 h-0.5 bg-white/40 rounded"></div>
+                    </div>
+
+                    {/* Glossy effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent rounded-lg"></div>
                   </div>
 
-                  {/* Glossy effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent rounded-lg"></div>
+                  {/* 3D depth effect */}
+                  <div
+                    className={`absolute top-0.5 sm:top-1 left-0.5 sm:left-1 w-16 sm:w-20 h-12 sm:h-16 bg-gradient-to-br ${item.gradient} opacity-30 rounded-lg -z-10`}></div>
                 </div>
 
-                {/* 3D depth effect */}
-                <div
-                  className={`absolute top-0.5 sm:top-1 left-0.5 sm:left-1 w-16 sm:w-20 h-12 sm:h-16 bg-gradient-to-br ${item.gradient} opacity-30 rounded-lg -z-10`}></div>
+                {/* Label */}
+                <span className="text-white text-xs sm:text-sm font-medium text-center leading-tight max-w-16 sm:max-w-20">
+                  {item.title}
+                </span>
               </div>
-
-              {/* Label */}
-              <span className="text-white text-xs sm:text-sm font-medium text-center leading-tight max-w-16 sm:max-w-20">
-                {item.title}
-              </span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Background mountain silhouette */}
