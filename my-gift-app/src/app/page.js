@@ -44,7 +44,8 @@ export default function Home() {
           </div>
 
           {/* Navigation - Centered */}
-          <nav className="flex items-center gap-8 text-white text-sm">
+          {/* Added 'hidden' and 'sm:flex' here */}
+          <nav className="hidden sm:flex items-center gap-8 text-white text-sm">
             <a href="#" className="hover:text-gray-300 transition-colors">
               Home
             </a>
