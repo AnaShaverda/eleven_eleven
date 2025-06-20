@@ -4,6 +4,8 @@ import { useState } from "react";
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a1847] via-[#2d1b69] to-[#8b3a62] relative overflow-hidden">
+      {/* Browser-like frame */}
+      <div className="absolute inset-4 border-2 border-white/20 rounded-lg"></div>
       {/* Grid Background */}
       <div
         className="absolute inset-0 opacity-20"
@@ -28,7 +30,7 @@ export default function Home() {
       </div>
 
       {/* Header */}
-      <header className="relative z-20 p-6">
+      <header className="relative z-20 p-10">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Menu Icon */}
           <div className="flex items-center gap-4">
@@ -76,7 +78,7 @@ export default function Home() {
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-center px-4 py-12">
         {/* Logo */}
-        <div className="text-white text-8xl font-bold mb-16 tracking-wider">
+        <div className="text-white text-8xl font-bold mb-16 tracking-wider font-serif">
           11:11
         </div>
 
